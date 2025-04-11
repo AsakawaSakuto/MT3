@@ -5,8 +5,7 @@
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 
 // 行列
-struct Matrix4x4
-{
+struct Matrix4x4 {
 	float m[4][4];
 };
 
