@@ -1,6 +1,7 @@
 #include <Novice.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include"Matrix4x4Function.h"
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 
