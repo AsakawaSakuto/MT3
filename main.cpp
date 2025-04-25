@@ -1,8 +1,41 @@
 #include <Novice.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include"Vector3.h"
+#include"Matrix4x4.h"
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
+
+static const int kRowHeight = 20;
+static const int kColumnWidth = 60;
+
+// クロス積（ベクトル積）
+Vector3 Cross(const Vector3& v1, const Vector3& v2)
+{
+	return Vector3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
+}
+
+// cotangent(cot)、tanの逆数
+float cot(float other) {
+	return 1 / tan(other);
+}
+
+// 4x4行列の数値表示
+void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label) {
+	Novice::ScreenPrintf(x + kColumnWidth * 5, y, "%s", label);
+	for (int row = 0; row < 4; row++) {
+		for (int column = 0; column < 4; column++) {
+			Novice::ScreenPrintf(x + column * kColumnWidth, y + row * kRowHeight, "%6.02f", matrix.m[row][column]);
+		}
+	}
+}
+
+void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {
+	Novice::ScreenPrintf(x, y, "%.02f", vector.x);
+	Novice::ScreenPrintf(x + kColumnWidth, y, "%.02f", vector.y);
+	Novice::ScreenPrintf(x + kColumnWidth * 2, y, "%.02f", vector.z);
+	Novice::ScreenPrintf(x + kColumnWidth * 3, y, "%s", label);
+}
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
