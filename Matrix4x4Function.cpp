@@ -183,25 +183,25 @@ Matrix4x4 IdentityMatrix() {
 Matrix4x4 MakeTranslateMatrix(const  Vector3& translate) {
 	Matrix4x4 result{};
 
-	result.m[0][0] = 1;
-	result.m[0][1] = 0;
-	result.m[0][2] = 0;
-	result.m[0][3] = 0;
+	result.m[0][0] = 1.0f;
+	result.m[0][1] = 0.0f;
+	result.m[0][2] = 0.0f;
+	result.m[0][3] = 0.0f;
 
-	result.m[1][0] = 0;
-	result.m[1][1] = 1;
-	result.m[1][2] = 0;
-	result.m[1][3] = 0;
+	result.m[1][0] = 0.0f;
+	result.m[1][1] = 1.0f;
+	result.m[1][2] = 0.0f;
+	result.m[1][3] = 0.0f;
 
-	result.m[2][0] = 0;
-	result.m[2][1] = 0;
-	result.m[2][2] = 1;
-	result.m[2][3] = 0;
+	result.m[2][0] = 0.0f;
+	result.m[2][1] = 0.0f;
+	result.m[2][2] = 1.0f;
+	result.m[2][3] = 0.0f;
 
 	result.m[3][0] = translate.x;
 	result.m[3][1] = translate.y;
 	result.m[3][2] = translate.z;
-	result.m[3][3] = 1;
+	result.m[3][3] = 1.0f;
 
 	return result;
 }
@@ -211,24 +211,24 @@ Matrix4x4 MakeScaleMatrix(const  Vector3& scale) {
 	Matrix4x4 result{};
 
 	result.m[0][0] = scale.x;
-	result.m[0][1] = 0;
-	result.m[0][2] = 0;
-	result.m[0][3] = 0;
+	result.m[0][1] = 0.0f;
+	result.m[0][2] = 0.0f;
+	result.m[0][3] = 0.0f;
 
-	result.m[1][0] = 0;
+	result.m[1][0] = 0.0f;
 	result.m[1][1] = scale.y;
-	result.m[1][2] = 0;
-	result.m[1][3] = 0;
+	result.m[1][2] = 0.0f;
+	result.m[1][3] = 0.0f;
 
-	result.m[2][0] = 0;
-	result.m[2][1] = 0;
+	result.m[2][0] = 0.0f;
+	result.m[2][1] = 0.0f;
 	result.m[2][2] = scale.z;
-	result.m[2][3] = 0;
+	result.m[2][3] = 0.0f;
 
-	result.m[3][0] = 0;
-	result.m[3][1] = 0;
-	result.m[3][2] = 0;
-	result.m[3][3] = 1;
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
 
 	return result;
 }
@@ -253,22 +253,22 @@ Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
 Matrix4x4 MakeRotateXMatrix(float rotate) {
 	Matrix4x4 result{};
 
-	result.m[0][0] = 1;
-	result.m[0][1] = 0;
-	result.m[0][2] = 0;
-	result.m[0][3] = 0;
-	result.m[1][0] = 0;
+	result.m[0][0] = 1.0f;
+	result.m[0][1] = 0.0f;
+	result.m[0][2] = 0.0f;
+	result.m[0][3] = 0.0f;
+	result.m[1][0] = 0.0f;
 	result.m[1][1] = std::cos(rotate);
 	result.m[1][2] = std::sin(rotate);
-	result.m[1][3] = 0;
-	result.m[2][0] = 0;
+	result.m[1][3] = 0.0f;
+	result.m[2][0] = 0.0f;
 	result.m[2][1] = -std::sin(rotate);
 	result.m[2][2] = std::cos(rotate);
-	result.m[2][3] = 0;
-	result.m[3][0] = 0;
-	result.m[3][1] = 0;
-	result.m[3][2] = 0;
-	result.m[3][3] = 1;
+	result.m[2][3] = 0.0f;
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
 
 
 	return result;
@@ -279,21 +279,21 @@ Matrix4x4 MakeRotateYMatrix(float rotate) {
 	Matrix4x4 result{};
 
 	result.m[0][0] = std::cos(rotate);
-	result.m[0][1] = 0;
+	result.m[0][1] = 0.0f;
 	result.m[0][2] = -std::sin(rotate);;
-	result.m[0][3] = 0;
-	result.m[1][0] = 0;
-	result.m[1][1] = 1;
-	result.m[1][2] = 0;
-	result.m[1][3] = 0;
+	result.m[0][3] = 0.0f;
+	result.m[1][0] = 0.0f;
+	result.m[1][1] = 1.0f;
+	result.m[1][2] = 0.0f;
+	result.m[1][3] = 0.0f;
 	result.m[2][0] = std::sin(rotate);
-	result.m[2][1] = 0;
+	result.m[2][1] = 0.0f;
 	result.m[2][2] = std::cos(rotate);
-	result.m[2][3] = 0;
-	result.m[3][0] = 0;
-	result.m[3][1] = 0;
-	result.m[3][2] = 0;
-	result.m[3][3] = 1;
+	result.m[2][3] = 0.0f;
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
 
 
 	return result;
@@ -305,20 +305,20 @@ Matrix4x4 MakeRotateZMatrix(float rotate) {
 
 	result.m[0][0] = std::cos(rotate);
 	result.m[0][1] = std::sin(rotate);
-	result.m[0][2] = 0;
-	result.m[0][3] = 0;
+	result.m[0][2] = 0.0f;
+	result.m[0][3] = 0.0f;
 	result.m[1][0] = -std::sin(rotate);
 	result.m[1][1] = std::cos(rotate);
-	result.m[1][2] = 0;
-	result.m[1][3] = 0;
-	result.m[2][0] = 0;
-	result.m[2][1] = 0;
-	result.m[2][2] = 1;
-	result.m[2][3] = 0;
-	result.m[3][0] = 0;
-	result.m[3][1] = 0;
-	result.m[3][2] = 0;
-	result.m[3][3] = 1;
+	result.m[1][2] = 0.0f;
+	result.m[1][3] = 0.0f;
+	result.m[2][0] = 0.0f;
+	result.m[2][1] = 0.0f;
+	result.m[2][2] = 1.0f;
+	result.m[2][3] = 0.0f;
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
 
 
 	return result;
@@ -337,19 +337,19 @@ Matrix4x4 MakeAffineMatrixMatrix(const  Vector3& scale, const  Vector3& rotate, 
 	result.m[0][0] = scale.x * rotateXYZMatrix.m[0][0];
 	result.m[0][1] = scale.x * rotateXYZMatrix.m[0][1];
 	result.m[0][2] = scale.x * rotateXYZMatrix.m[0][2];
-	result.m[0][3] = 0;
+	result.m[0][3] = 0.0f;
 	result.m[1][0] = scale.y * rotateXYZMatrix.m[1][0];
 	result.m[1][1] = scale.y * rotateXYZMatrix.m[1][1];
 	result.m[1][2] = scale.y * rotateXYZMatrix.m[1][2];
-	result.m[1][3] = 0;
+	result.m[1][3] = 0.0f;
 	result.m[2][0] = scale.z * rotateXYZMatrix.m[2][0];
 	result.m[2][1] = scale.z * rotateXYZMatrix.m[2][1];
 	result.m[2][2] = scale.z * rotateXYZMatrix.m[2][2];
-	result.m[2][3] = 0;
+	result.m[2][3] = 0.0f;
 	result.m[3][0] = translate.x;
 	result.m[3][1] = translate.y;
 	result.m[3][2] = translate.z;
-	result.m[3][3] = 1;
+	result.m[3][3] = 1.0f;
 
 
 
