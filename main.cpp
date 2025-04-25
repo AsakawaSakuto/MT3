@@ -1,207 +1,26 @@
 #include <Novice.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include<assert.h>
-#include <cmath>
+#include"Matrix4x4Function.h"
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 
-// 3次元ベクトル
-struct Vector3 {
-	float x, y, z;
-};
-
-// 行列
-struct Matrix4x4 {
-	float m[4][4];
-};
-
-// 行列の積
-Matrix4x4 Multiply(const Matrix4x4& v1, const Matrix4x4& v2) {
-	Matrix4x4 result{};
-
-	for (int x = 0; x < 4; x++) {
-		for (int y = 0; y < 4; y++) {
-			for (int z = 0; z < 4; z++) {
-				result.m[y][x] += v1.m[y][z] * v2.m[z][x];
-			}
-		}
-	}
-
-	return result;
-};
-
-// 移動行列
-Matrix4x4 MakeTranslateMatrix(const  Vector3& translate) {
-	Matrix4x4 result{};
-
-	result.m[0][0] = 1.f;
-	result.m[0][1] = 0.f;
-	result.m[0][2] = 0.f;
-	result.m[0][3] = 0.f;
-
-	result.m[1][0] = 0.f;
-	result.m[1][1] = 1.f;
-	result.m[1][2] = 0.f;
-	result.m[1][3] = 0.f;
-
-	result.m[2][0] = 0.f;
-	result.m[2][1] = 0.f;
-	result.m[2][2] = 1.f;
-	result.m[2][3] = 0.f;
-
-	result.m[3][0] = translate.x;
-	result.m[3][1] = translate.y;
-	result.m[3][2] = translate.z;
-	result.m[3][3] = 1.f;
-
-	return result;
-}
-
-// 拡大縮小行列
-Matrix4x4 MakeScaleMatrix(const  Vector3& scale) {
-	Matrix4x4 result{};
-
-	result.m[0][0] = scale.x;
-	result.m[0][1] = 0.f;
-	result.m[0][2] = 0.f;
-	result.m[0][3] = 0.f;
-
-	result.m[1][0] = 0.f;
-	result.m[1][1] = scale.y;
-	result.m[1][2] = 0.f;
-	result.m[1][3] = 0.f;
-
-	result.m[2][0] = 0.f;
-	result.m[2][1] = 0.f;
-	result.m[2][2] = scale.z;
-	result.m[2][3] = 0.f;
-
-	result.m[3][0] = 0.f;
-	result.m[3][1] = 0.f;
-	result.m[3][2] = 0.f;
-	result.m[3][3] = 1.f;
-
-	return result;
-}
-
-// 回転行列X
-Matrix4x4 MakeRotateXMatrix(float rotate) {
-	Matrix4x4 result{};
-
-	result.m[0][0] = 1.f;
-	result.m[0][1] = 0.f;
-	result.m[0][2] = 0.f;
-	result.m[0][3] = 0.f;
-	result.m[1][0] = 0.f;
-	result.m[1][1] = std::cos(rotate);
-	result.m[1][2] = std::sin(rotate);
-	result.m[1][3] = 0.f;
-	result.m[2][0] = 0.f;
-	result.m[2][1] = -std::sin(rotate);
-	result.m[2][2] = std::cos(rotate);
-	result.m[2][3] = 0.f;
-	result.m[3][0] = 0.f;
-	result.m[3][1] = 0.f;
-	result.m[3][2] = 0.f;
-	result.m[3][3] = 1.f;
-
-	return result;
-}
-// 回転行列Y
-Matrix4x4 MakeRotateYMatrix(float rotate) {
-	Matrix4x4 result{};
-
-	result.m[0][0] = std::cos(rotate);
-	result.m[0][1] = 0.f;
-	result.m[0][2] = -std::sin(rotate);;
-	result.m[0][3] = 0.f;
-	result.m[1][0] = 0.f;
-	result.m[1][1] = 1.f;
-	result.m[1][2] = 0.f;
-	result.m[1][3] = 0.f;
-	result.m[2][0] = std::sin(rotate);
-	result.m[2][1] = 0.f;
-	result.m[2][2] = std::cos(rotate);
-	result.m[2][3] = 0.f;
-	result.m[3][0] = 0.f;
-	result.m[3][1] = 0.f;
-	result.m[3][2] = 0.f;
-	result.m[3][3] = 1.f;
-
-	return result;
-}
-// 回転行列Z
-Matrix4x4 MakeRotateZMatrix(float rotate) {
-	Matrix4x4 result{};
-
-	result.m[0][0] = std::cos(rotate);
-	result.m[0][1] = std::sin(rotate);
-	result.m[0][2] = 0.f;
-	result.m[0][3] = 0.f;
-	result.m[1][0] = -std::sin(rotate);
-	result.m[1][1] = std::cos(rotate);
-	result.m[1][2] = 0.f;
-	result.m[1][3] = 0.f;
-	result.m[2][0] = 0.f;
-	result.m[2][1] = 0.f;
-	result.m[2][2] = 1.f;
-	result.m[2][3] = 0.f;
-	result.m[3][0] = 0.f;
-	result.m[3][1] = 0.f;
-	result.m[3][2] = 0.f;
-	result.m[3][3] = 1.f;
-
-	return result;
-}
-
-// アフィン変換
-Matrix4x4 MakeAffineMatrixMatrix(const  Vector3& scale, const  Vector3& rotate, const  Vector3& translate) {
-	Matrix4x4 result{};
-
-	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
-	Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
-	Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
-	Matrix4x4 rotateXYZMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
-
-	result.m[0][0] = scale.x * rotateXYZMatrix.m[0][0];
-	result.m[0][1] = scale.x * rotateXYZMatrix.m[0][1];
-	result.m[0][2] = scale.x * rotateXYZMatrix.m[0][2];
-	result.m[0][3] = 0.f;
-	result.m[1][0] = scale.y * rotateXYZMatrix.m[1][0];
-	result.m[1][1] = scale.y * rotateXYZMatrix.m[1][1];
-	result.m[1][2] = scale.y * rotateXYZMatrix.m[1][2];
-	result.m[1][3] = 0.f;
-	result.m[2][0] = scale.z * rotateXYZMatrix.m[2][0];
-	result.m[2][1] = scale.z * rotateXYZMatrix.m[2][1];
-	result.m[2][2] = scale.z * rotateXYZMatrix.m[2][2];
-	result.m[2][3] = 0.f;
-	result.m[3][0] = translate.x;
-	result.m[3][1] = translate.y;
-	result.m[3][2] = translate.z;
-	result.m[3][3] = 1.f;
-
-	return result;
-};
-
+static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
 
-static const int kRowHeight = 20;
+void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* Name) {
 
-void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) {
-	Novice::ScreenPrintf(x, y, "%.02f", vector.x);
-	Novice::ScreenPrintf(x + kColumnWidth * 1, y, "%.02f", vector.y);
-	Novice::ScreenPrintf(x + kColumnWidth * 2, y, "%.02f", vector.z);
-	Novice::ScreenPrintf(x + kColumnWidth * 3, y, "%s", label);
-}
+	Novice::ScreenPrintf(x, y, "%s", Name);
 
-void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label) {
-	Novice::ScreenPrintf(x, y, "%s", label);
 	for (int row = 0; row < 4; ++row) {
 		for (int column = 0; column < 4; ++column) {
-
-			Novice::ScreenPrintf(x + column * kColumnWidth, 20 + y + row * kRowHeight, "%6.02f", matrix.m[row][column]);
-
+			// 要素描画
+			Novice::ScreenPrintf(
+				x + column * kColumnWidth,
+				y + row * kRowHeight + kRowHeight,
+				"%6.02f",
+				matrix.m[row][column]
+			);
 		}
 	}
 }
@@ -216,10 +35,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
-	Vector3 scale{ 1.2f,0.79f,-2.1f };
-	Vector3 rotate{ 0.4f,1.43f,-0.8f };
-	Vector3 translate{ 2.7f,-4.15f,1.57f };
-
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -233,17 +48,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		Matrix4x4 worldMatrix = MakeAffineMatrixMatrix(scale, rotate, translate);
+		Matrix4x4 orthographicMatrix = MakeOrthGraphicMatrix(-160.f, 160.f, 200.f, 300.f, 0.f, 1000.f);
+		Matrix4x4 perspectiveFovMatrix = MakePerspectiveFovMatrix(0.63f, 1.33f, 0.1f, 1000.f);
+		Matrix4x4 viewportMatrix = MakeViewPortMatrix(100.f, 200.f, 600.f, 300.f, 0.f, 1.f);
 
 		///
 		/// ↑更新処理ここまで
 		///
 
+		MatrixScreenPrintf(0, 0, orthographicMatrix, "orthographicMatrix");
+		MatrixScreenPrintf(0, kRowHeight * 5, perspectiveFovMatrix, "perspectiveFovMatrix");
+		MatrixScreenPrintf(0, kRowHeight * 10, viewportMatrix, "viewportMatrix");
+
 		///
 		/// ↓描画処理ここから
 		///
-
-		MatrixScreenPrintf(0, 0, worldMatrix, "worldMatrix");
 
 		///
 		/// ↑描画処理ここまで
