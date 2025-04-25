@@ -41,7 +41,7 @@ Matrix4x4 MakeRotateYMatrix(float rotate);
 Matrix4x4 MakeRotateZMatrix(float rotate);
 
 //アフィン変換
-Matrix4x4 MakeAffineMatrixMatrix(const  Vector3& scale, const  Vector3& rotate, const  Vector3& translate);
+Matrix4x4 MakeAffineMatrix(const  Vector3& scale, const  Vector3& rotate, const  Vector3& translate);
 
 // 正射影行列
 Matrix4x4 MakeOrthGraphicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);

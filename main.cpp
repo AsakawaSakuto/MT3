@@ -3,6 +3,7 @@
 #include <math.h>
 #include"Vector3.h"
 #include"Matrix4x4.h"
+#include"Matrix4x4Function.h"
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 
@@ -43,6 +44,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, 1280, 720);
 
+	Vector3 v1{ 1.2f,-3.9f,2.5f };
+	Vector3 v2{ 2.8f,0.4f,-1.3f };
+
+	Vector3 rotate = {};
+	Vector3 translate = {};
+
+	Vector3 cameraPosition = { 0.0f,0.0f,-100.f };
+
+	Vector3 kLocalVertices[3] = {};
+
+	// 上
+	kLocalVertices[0] = { 0.0f,5.0f,0.0f };
+	// 右下
+	kLocalVertices[1] = { 5.0f,-5.0f,0.0f };
+	// 左下	
+	kLocalVertices[2] = { -5.0f,-5.0f,0.0f };
+
+	int kWindowWidth = 1280;
+	int kWindowHeight = 720;
+
 	// キー入力結果を受け取る箱
 	char keys[256] = {0};
 	char preKeys[256] = {0};
@@ -60,6 +81,52 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+		Vector3 cross = Cross(v1, v2);
+
+		if (keys[DIK_W]) {
+			translate.z += 0.5f;
+		}
+		if (keys[DIK_S]) {
+			translate.z -= 0.5f;
+		}
+		if (keys[DIK_D]) {
+			translate.x += 0.1f;
+		}
+		if (keys[DIK_A]) {
+			translate.x -= 0.1f;
+		}
+
+		rotate.y += 0.05f;
+
+		// カメラの後ろに行かない
+		if (translate.z <= -99.f)
+		{
+			translate.z = -99.f;
+		}
+
+		// 各種行列の計算
+		Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, rotate, translate);
+		Matrix4x4 cameraMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, cameraPosition);
+		Matrix4x4 viewMatrix = InverseMatrix(cameraMatrix);
+		Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kWindowWidth) / float(kWindowHeight), 0.1f, 100.0f);
+
+		// WVPMatrixを作る
+		Matrix4x4 worldViewProjectionMatrix = MultiplyMatrix(worldMatrix, MultiplyMatrix(viewMatrix, projectionMatrix));
+
+		// ViewportMatrixを作る
+		Matrix4x4 viewPortMatrix = MakeViewPortMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
+
+		// Screen空間へと頂点を変換する
+		Vector3 screenVertices[3];
+		for (uint32_t i = 0; i < 3; ++i) {
+
+			// NDCまで変換。Transformを使うと同次座標系->デカルト座標系の処理が行われ、結果的にZDivideが行われることになる
+			Vector3 ndcVertex = Transform(kLocalVertices[i], worldViewProjectionMatrix);
+
+			// Viewport変換を行ってScreen空間へ
+			screenVertices[i] = Transform(ndcVertex, viewPortMatrix);
+		}
+
 		///
 		/// ↑更新処理ここまで
 		///
@@ -67,6 +134,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
+
+		VectorScreenPrintf(0, 0, cross, "Cross");
+
+		Novice::DrawTriangle(
+			int(screenVertices[0].x), int(screenVertices[0].y),
+			int(screenVertices[1].x), int(screenVertices[1].y),
+			int(screenVertices[2].x), int(screenVertices[2].y), RED, kFillModeSolid);
+
+		Novice::ScreenPrintf(100, 100, "%f", translate.z);
 
 		///
 		/// ↑描画処理ここまで
