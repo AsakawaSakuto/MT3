@@ -1,44 +1,53 @@
-#pragma once
+ï»¿#pragma once
 #include"Vector3.h"
 #include"Matrix4x4.h"
 #include<assert.h>
 #include <iostream>
 
-//s—ñ‚Ì‰ÁZ
+//è¡Œåˆ—ã®åŠ ç®—
 Matrix4x4 AddMatrix(const Matrix4x4& m1, const Matrix4x4& m2);
 
-//s—ñ‚ÌŒ¸Z
+//è¡Œåˆ—ã®æ¸›ç®—
 Matrix4x4 SubtractMatrix(const Matrix4x4& m1, const Matrix4x4& m2);
 
-//s—ñ‚ÌÏ
+//è¡Œåˆ—ã®ç©
 Matrix4x4 MultiplyMatrix(const Matrix4x4& m1, const Matrix4x4& m2);
 
-//‹ts—ñ
+//é€†è¡Œåˆ—
 Matrix4x4 InverseMatrix(const Matrix4x4& m);
 
-//“]’us—ñ
+//è»¢ç½®è¡Œåˆ—
 Matrix4x4 TransposeMatrix(const Matrix4x4& m);
 
-//’PˆÊs—ñ
+//å˜ä½è¡Œåˆ—
 Matrix4x4 IdentityMatrix();
 
-//ˆÚ“®s—ñ
+//ç§»å‹•è¡Œåˆ—
 Matrix4x4 MakeTranslateMatrix(const  Vector3& translate);
 
-//Šg‘åk¬s—ñ
+//æ‹¡å¤§ç¸®å°è¡Œåˆ—
 Matrix4x4 MakeScaleMatrix(const  Vector3& scale);
 
-//À•W•ÏŠ·
+//åº§æ¨™å¤‰æ›
 Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
-//‰ñ“]s—ñX
+//å›è»¢è¡Œåˆ—X
 Matrix4x4 MakeRotateXMatrix(float rotate);
 
-//‰ñ“]s—ñY
+//å›è»¢è¡Œåˆ—Y
 Matrix4x4 MakeRotateYMatrix(float rotate);
 
-//‰ñ“]s—ñZ
+//å›è»¢è¡Œåˆ—Z
 Matrix4x4 MakeRotateZMatrix(float rotate);
 
-//ƒAƒtƒBƒ“•ÏŠ·
+//ã‚¢ãƒ•ã‚£ãƒ³å¤‰æ›
 Matrix4x4 MakeAffineMatrixMatrix(const  Vector3& scale, const  Vector3& rotate, const  Vector3& translate);
+
+// æ­£å°„å½±è¡Œåˆ—
+Matrix4x4 MakeOrthGraphicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip);
+
+// é€è¦–å°„å½±è¡Œåˆ—
+Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
+
+// ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆå¤‰æ›è¡Œåˆ—
+Matrix4x4 MakeViewPortMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
