@@ -81,27 +81,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+		// クロス積
 		Vector3 cross = Cross(v1, v2);
 
-		if (keys[DIK_W]) {
-			translate.z += 0.5f;
-		}
-		if (keys[DIK_S]) {
-			translate.z -= 0.5f;
-		}
 		if (keys[DIK_D]) {
 			translate.x += 0.1f;
 		}
 		if (keys[DIK_A]) {
 			translate.x -= 0.1f;
 		}
+		if (keys[DIK_W]) {
+			translate.z += 0.5f;
+		}
+		if (keys[DIK_S]) {
+			translate.z -= 0.5f;
+		}
 
-		rotate.y += 0.05f;
+		rotate.y += 0.1f;
 
 		// カメラの後ろに行かない
-		if (translate.z <= -99.f)
-		{
-			translate.z = -99.f;
+		if (translate.z <= -99.f) {
+		    translate.z = -99.f;
 		}
 
 		// 各種行列の計算
@@ -110,20 +110,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewMatrix = InverseMatrix(cameraMatrix);
 		Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kWindowWidth) / float(kWindowHeight), 0.1f, 100.0f);
 
-		// WVPMatrixを作る
+		// WVPMatrix
 		Matrix4x4 worldViewProjectionMatrix = MultiplyMatrix(worldMatrix, MultiplyMatrix(viewMatrix, projectionMatrix));
 
-		// ViewportMatrixを作る
+		// ViewportMatrix
 		Matrix4x4 viewPortMatrix = MakeViewPortMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		// Screen空間へと頂点を変換する
+		// Screen空間へと頂点を変換
 		Vector3 screenVertices[3];
 		for (uint32_t i = 0; i < 3; ++i) {
 
 			// NDCまで変換。Transformを使うと同次座標系->デカルト座標系の処理が行われ、結果的にZDivideが行われることになる
 			Vector3 ndcVertex = Transform(kLocalVertices[i], worldViewProjectionMatrix);
 
-			// Viewport変換を行ってScreen空間へ
+			// Screen空間
 			screenVertices[i] = Transform(ndcVertex, viewPortMatrix);
 		}
 
