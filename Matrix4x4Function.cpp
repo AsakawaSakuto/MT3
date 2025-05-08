@@ -325,7 +325,7 @@ Matrix4x4 MakeRotateZMatrix(float rotate) {
 }
 
 //アフィン変換
-Matrix4x4 MakeAffineMatrixMatrix(const  Vector3& scale, const  Vector3& rotate, const  Vector3& translate) {
+Matrix4x4 MakeAffineMatrix(const  Vector3& scale, const  Vector3& rotate, const  Vector3& translate) {
 	Matrix4x4 result{};
 
 	Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
