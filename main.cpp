@@ -14,11 +14,6 @@ struct Sphere {
 	float radius;//半径
 };
 
-//クロス積（ベクトル積）
-Vector3 Cross(const Vector3& v1, const Vector3& v2) {
-	return Vector3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
-}
-
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
 

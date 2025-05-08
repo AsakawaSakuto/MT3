@@ -17,6 +17,9 @@
     <Filter Include="Matrix4x4Function">
       <UniqueIdentifier>{c12beb77-253e-4706-a388-50df75cbf181}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DrawObject3D">
+      <UniqueIdentifier>{3e3f1a47-af6d-40f5-ac62-698f2927cb5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp">
@@ -43,6 +46,9 @@
     </ClCompile>
     <ClCompile Include="Matrix4x4Function.cpp">
       <Filter>Matrix4x4Function</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawObject3D.cpp">
+      <Filter>DrawObject3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +125,9 @@
     </ClInclude>
     <ClInclude Include="Matrix4x4Function.h">
       <Filter>Matrix4x4Function</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawObject3D.h">
+      <Filter>DrawObject3D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
