@@ -154,9 +154,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 rotate = {};
 	Vector3 translate = {};
 
-	//おすすめ初期数値
-	Vector3 cameraTranslate = { 0.0f,1.9f,-6.49f };
-	Vector3 cameraRotate = { 0.26f,0.0f,0.0f };
+	Vector3 cameraTranslate = { 0.f,2.f,-6.49f };
+	Vector3 cameraRotate = { 0.3f,0.f,0.f };
 
 	// キー入力結果を受け取る箱
 	char keys[256] = {0};
