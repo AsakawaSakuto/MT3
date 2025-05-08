@@ -1,14 +1,19 @@
 #include <Novice.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include"imgui.h"
+#include"Matrix4x4Function.h"
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
+
+int kWindowWidth = 1280;
+int kWindowHeight = 720;
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ライブラリの初期化
-	Novice::Initialize(kWindowTitle, 1280, 720);
+	Novice::Initialize(kWindowTitle, kWindowWidth, kWindowHeight);
 
 	// キー入力結果を受け取る箱
 	char keys[256] = {0};
