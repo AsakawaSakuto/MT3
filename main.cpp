@@ -2,8 +2,10 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include"imgui.h"
-#include"Matrix4x4Function.h"
+#include"algorithm"
+#include"MatrixFunction.h"
 #include"DrawObject.h"
+#include"mathFunction.h"
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 
