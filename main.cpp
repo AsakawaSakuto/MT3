@@ -43,6 +43,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
+		ImGui::Begin("Window");
+		
+		ImGui::End();
+
 		///
 		/// ↑描画処理ここまで
 		///
