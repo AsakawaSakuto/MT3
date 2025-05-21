@@ -4,8 +4,8 @@
 #include"imgui.h"
 #include"algorithm"
 #include"MatrixFunction.h"
-#include"DrawObject.h"
 #include"mathFunction.h"
+#include"DrawObject.h"
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 
