@@ -3,7 +3,7 @@
 #include <math.h>
 #include"imgui.h"
 #include"Matrix4x4Function.h"
-#include"DrawObject3D.h"
+#include"DrawObject.h"
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 

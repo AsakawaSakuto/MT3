@@ -1,4 +1,4 @@
-#include "DrawObject3D.h"
+#include "DrawObject.h"
 
 //グリッドを表示する
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix) {
