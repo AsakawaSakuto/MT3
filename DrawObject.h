@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <Novice.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -6,12 +6,12 @@
 #include <imgui.h>
 
 struct Sphere {
-    Vector3 center;//’†S“_
-    float radius;//”¼Œa
+    Vector3 center;//ä¸­å¿ƒç‚¹
+    float radius;//åŠå¾„
 };
 
-//ƒOƒŠƒbƒh‚ğ•\¦‚·‚é
+//ã‚°ãƒªãƒƒãƒ‰ã‚’è¡¨ç¤ºã™ã‚‹
 void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 
-//ƒXƒtƒBƒA‚ğ•\¦‚·‚é
+//ã‚¹ãƒ•ã‚£ã‚¢ã‚’è¡¨ç¤ºã™ã‚‹
 void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color);
