@@ -68,7 +68,7 @@ void CameraRotateController(Vector3& cameraR, float cameraSpeed, char keys[256])
 	}
 }
 
-void CameraControllerManager(bool &cameraMode, Vector3 &cameraT, Vector3 &cameraR, float cameraSpeed, char keys[256], char preKeys[256])
+void CameraControllerManager(bool& cameraMode, Vector3& cameraT, Vector3& cameraR, float cameraTlanslateSpeed, float cameraRotateSpeed, char keys[256], char preKeys[256])
 {
 	if (cameraMode)
 	{
@@ -76,7 +76,7 @@ void CameraControllerManager(bool &cameraMode, Vector3 &cameraT, Vector3 &camera
 		{
 			cameraMode = false;
 		}
-		CameraTranslateController(cameraT, cameraSpeed, keys);
+		CameraTranslateController(cameraT, cameraTlanslateSpeed, keys);
 	}
 	else
 	{
@@ -84,7 +84,7 @@ void CameraControllerManager(bool &cameraMode, Vector3 &cameraT, Vector3 &camera
 		{
 			cameraMode = true;
 		}
-		CameraRotateController(cameraR, cameraSpeed, keys);
+		CameraRotateController(cameraR, cameraRotateSpeed, keys);
 	}
 	if (keys[DIK_R])
 	{
@@ -108,7 +108,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRotate{ 0.2f,0.0f,0.0f };     // カメラの角度
 	Vector3 cameraTranslate{ 0.0f,2.5f,-10.f }; // カメラの位置
 
-	float cameraSpeed = 0.02f;
+	float cameraTranslateSpeed = 0.02f;
+	float cameraRotateSpeed = 0.01f;
 	bool cameraMode = true;
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -124,7 +125,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		CameraControllerManager(cameraMode, cameraTranslate, cameraRotate, cameraSpeed, keys, preKeys);
+		CameraControllerManager(cameraMode, cameraTranslate, cameraRotate, cameraTranslateSpeed, cameraRotateSpeed, keys, preKeys);
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix(cameraScale, cameraRotate, cameraTranslate);
 
