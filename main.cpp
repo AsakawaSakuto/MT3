@@ -28,7 +28,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRotate{ 0.2f,0.0f,0.0f };     // カメラの角度
 	Vector3 cameraTranslate{ 0.0f,2.5f,-10.f }; // カメラの位置
 
-	float cameraTranslateSpeed = 0.02f;
+	float cameraTranslateSpeed = 0.03f;
 	float cameraRotateSpeed = 0.01f;
 	bool cameraMode = true;
 
@@ -78,13 +78,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		if (cameraMode)
 		{
-			Novice::ScreenPrintf(20, 20, "CameraMode : Translate");
+			Novice::ScreenPrintf(20, 20, "CameraMode : Translate : X->(D or A) Y->(Q or E) Z->(W or S)");
 		}
 		else
 		{
-			Novice::ScreenPrintf(20, 20, "CameraMode : Rotate");
+			Novice::ScreenPrintf(20, 20, "CameraMode : Rotate : X->(W or S) Y->(Q or E) Z->(D or A)");
 		}
-		Novice::ScreenPrintf(20, 40, "ValueReset : R");
+		Novice::ScreenPrintf(20, 40, "RotateReset : R");
+		Novice::ScreenPrintf(20, 60, "TranslateReset : T");
 
 		///
 		/// ↑描画処理ここまで

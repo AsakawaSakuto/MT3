@@ -10,19 +10,19 @@ void CameraTranslateController(Vector3& cameraT, float cameraSpeed, char keys[25
 	{
 		cameraT.x += cameraSpeed;
 	}
-	if (keys[DIK_S])
+	if (keys[DIK_E])
 	{
 		cameraT.y -= cameraSpeed;
 	}
-	if (keys[DIK_W])
+	if (keys[DIK_Q])
 	{
 		cameraT.y += cameraSpeed;
 	}
-	if (keys[DIK_E])
+	if (keys[DIK_S])
 	{
 		cameraT.z -= cameraSpeed;
 	}
-	if (keys[DIK_Q])
+	if (keys[DIK_W])
 	{
 		cameraT.z += cameraSpeed;
 	}
@@ -38,11 +38,11 @@ void CameraRotateController(Vector3& cameraR, float cameraSpeed, char keys[256])
 	{
 		cameraR.x += cameraSpeed;
 	}
-	if (keys[DIK_E])
+	if (keys[DIK_Q])
 	{
 		cameraR.y -= cameraSpeed;
 	}
-	if (keys[DIK_Q])
+	if (keys[DIK_E])
 	{
 		cameraR.y += cameraSpeed;
 	}
@@ -75,7 +75,10 @@ void CameraControllerManager(bool& cameraMode, Vector3& cameraT, Vector3& camera
 	}
 	if (keys[DIK_R])
 	{
-		cameraT = { 0.0f,2.5f,-10.f };
 		cameraR = { 0.2f,0.0f,0.0f };
+	}
+	if (keys[DIK_T])
+	{
+		cameraT = { 0.0f,2.5f,-10.f };
 	}
 }
