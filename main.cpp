@@ -12,7 +12,7 @@ const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 int kWindowWidth = 1280;
 int kWindowHeight = 720;
 
-void CameraMove(Vector3& cameraT, float cameraSpeed, char keys[256])
+void CameraTranslateController(Vector3& cameraT, float cameraSpeed, char keys[256])
 {
 	if (keys[DIK_A])
 	{
@@ -37,6 +37,58 @@ void CameraMove(Vector3& cameraT, float cameraSpeed, char keys[256])
 	if (keys[DIK_W])
 	{
 		cameraT.z += cameraSpeed;
+	}
+}
+
+void CameraRotateController(Vector3& cameraR, float cameraSpeed, char keys[256])
+{
+	if (keys[DIK_A])
+	{
+		cameraR.x -= cameraSpeed;
+	}
+	if (keys[DIK_D])
+	{
+		cameraR.x += cameraSpeed;
+	}
+	if (keys[DIK_E])
+	{
+		cameraR.y -= cameraSpeed;
+	}
+	if (keys[DIK_Q])
+	{
+		cameraR.y += cameraSpeed;
+	}
+	if (keys[DIK_S])
+	{
+		cameraR.z -= cameraSpeed;
+	}
+	if (keys[DIK_W])
+	{
+		cameraR.z += cameraSpeed;
+	}
+}
+
+void CameraControllerManager(bool& cameraMode, Vector3& cameraT, Vector3& cameraR, float cameraSpeed, char keys[256], char preKeys[256])
+{
+	if (cameraMode)
+	{
+		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE])
+		{
+			cameraMode = false;
+		}
+		CameraTranslateController(cameraT, cameraSpeed, keys);
+	} else
+	{
+		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE])
+		{
+			cameraMode = true;
+		}
+		CameraRotateController(cameraR, cameraSpeed, keys);
+	}
+	if (keys[DIK_R])
+	{
+		cameraT = { 0.0f,2.5f,-10.f };
+		cameraR = { 0.2f,0.0f,0.0f };
 	}
 }
 
@@ -114,11 +166,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRotate{ 0.2f,0.0f,0.0f };     // カメラの角度
 	Vector3 cameraTranslate{ 0.0f,2.5f,-10.f }; // カメラの位置
 
+	float cameraSpeed = 0.01f;
+	bool cameraMode = true;
+
 	// 三角形
 	Triangle triangle = {
-	{{ 0.0f,0.8f,1.0f },
-	{ 1.4f,-0.8f,1.0f },
-	{ -1.4f,-0.8f,1.0f }}
+	{{ 0.0f,1.0f,1.0f },
+	{ 1.0f,-1.0f,1.0f },
+	{ -1.0f,-1.0f,1.0f }}
 	};
 
 	// 線
@@ -141,7 +196,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		CameraMove(cameraTranslate, 0.02f, keys);
+		CameraControllerManager(cameraMode, cameraTranslate, cameraRotate, cameraSpeed, keys, preKeys);
+
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix(cameraScale, cameraRotate, cameraTranslate);
 
@@ -215,7 +271,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 
+		ImGui::DragFloat3("Segment.origin", &segment.origin.x, 0.01f);
+		ImGui::DragFloat3("Segment.diff", &segment.diff.x, 0.01f);
+
+		ImGui::DragFloat3("Triangle.v0", &triangle.vertex[0].x, 0.01f);
+		ImGui::DragFloat3("Triangle.v1", &triangle.vertex[1].x, 0.01f);
+		ImGui::DragFloat3("Triangle.v2", &triangle.vertex[2].x, 0.01f);
+
 		ImGui::End();
+
+		if (cameraMode)
+		{
+			Novice::ScreenPrintf(20, 20, "CameraMode : Translate");
+		} 
+		else
+		{
+			Novice::ScreenPrintf(20, 20, "CameraMode : Rotate");
+		}
+		Novice::ScreenPrintf(20, 40, "ValueReset : R");
 
 		///
 		/// ↑描画処理ここまで
