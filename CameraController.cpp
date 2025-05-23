@@ -10,19 +10,19 @@ void CameraTranslateController(Vector3& cameraT, float cameraSpeed, char keys[25
 	{
 		cameraT.x += cameraSpeed;
 	}
-	if (keys[DIK_E])
+	if (keys[DIK_S])
 	{
 		cameraT.y -= cameraSpeed;
 	}
-	if (keys[DIK_Q])
+	if (keys[DIK_W])
 	{
 		cameraT.y += cameraSpeed;
 	}
-	if (keys[DIK_S])
+	if (keys[DIK_E])
 	{
 		cameraT.z -= cameraSpeed;
 	}
-	if (keys[DIK_W])
+	if (keys[DIK_Q])
 	{
 		cameraT.z += cameraSpeed;
 	}
