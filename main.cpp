@@ -12,6 +12,34 @@ const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 int kWindowWidth = 1280;
 int kWindowHeight = 720;
 
+void CameraMove(Vector3& cameraT, float cameraSpeed, char keys[256])
+{
+	if (keys[DIK_A])
+	{
+		cameraT.x -= cameraSpeed;
+	}
+	if (keys[DIK_D])
+	{
+		cameraT.x += cameraSpeed;
+	}
+	if (keys[DIK_E])
+	{
+		cameraT.y -= cameraSpeed;
+	}
+	if (keys[DIK_Q])
+	{
+		cameraT.y += cameraSpeed;
+	}
+	if (keys[DIK_S])
+	{
+		cameraT.z -= cameraSpeed;
+	}
+	if (keys[DIK_W])
+	{
+		cameraT.z += cameraSpeed;
+	}
+}
+
 // 三角形
 struct Triangle
 {
@@ -112,6 +140,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
+
+		CameraMove(cameraTranslate, 0.02f, keys);
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix(cameraScale, cameraRotate, cameraTranslate);
 
