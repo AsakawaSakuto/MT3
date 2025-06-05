@@ -185,10 +185,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 		
 		// スフィア
-		DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, color);
+		DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, WHITE);
 
 		// AABB
-		DrawAABB(aabb, worldViewProjectionMatrix, viewportMatrix, WHITE);
+		DrawAABB(aabb, worldViewProjectionMatrix, viewportMatrix, color);
 
 		ImGui::Begin("Window");
 		
