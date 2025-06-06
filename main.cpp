@@ -19,7 +19,7 @@ struct AABB
 	Vector3 max;// 最大点
 };
 
-// AABB1の描画
+// AABBの描画
 void DrawAABB(const AABB& aabb, Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix, uint32_t color)
 {
 	// aabb1
@@ -182,7 +182,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Vector3 project = Project(Subtract(point, segment.origin), segment.diff);
 		// 最近接点
 		Vector3 closestPoint = ClosestPoint(point, segment);
-
+		// 始点 終点
 		Vector3 start = Transform(Transform(segment.origin, worldViewProjectionMatrix), viewportMatrix);
 		Vector3 end = Transform(Transform(Add(segment.origin, segment.diff), worldViewProjectionMatrix), viewportMatrix);
 
@@ -223,8 +223,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("Segment origin", &segment.origin.x, 0.01f);
 		ImGui::DragFloat3("Segment diff", &segment.diff.x, 0.01f);
 
-		ImGui::DragFloat3("aabb1 max", &aabb.max.x, 0.01f);
-		ImGui::DragFloat3("aabb1 min", &aabb.min.x, 0.01f);
+		ImGui::DragFloat3("aabb max", &aabb.max.x, 0.01f);
+		ImGui::DragFloat3("aabb min", &aabb.min.x, 0.01f);
 
 		ImGui::End();
 
