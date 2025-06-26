@@ -22,15 +22,15 @@ enum class parts {
 };
 
 // 階層構造の変換行列を計算
-void UpdateHierarchy(const Vector3 translates[], const Vector3 rotates[], const Vector3 scales[], Matrix4x4 worldMatrices[], int partCount) {
+void UpdateHierarchy(const Vector3 translate[], const Vector3 rotate[], const Vector3 scale[], Matrix4x4 worldMatrix[], int partCount) {
 
 	// partsの数だけ回す
 	for (int i = 0; i < partCount; i++) {
 
 		// ローカル変換行列を作成
-		Matrix4x4 scaleMatrix = MakeScaleMatrix(scales[i]);
-		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(rotates[i]);
-		Matrix4x4 translateMatrix = MakeTranslateMatrix(translates[i]);
+		Matrix4x4 scaleMatrix = MakeScaleMatrix(scale[i]);
+		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(rotate[i]);
+		Matrix4x4 translateMatrix = MakeTranslateMatrix(translate[i]);
 
 		// SRT順でローカルのアフィン行列
 		Matrix4x4 localMatrix = MultiplyMatrix(scaleMatrix, MultiplyMatrix(rotateMatrix, translateMatrix));
@@ -38,38 +38,38 @@ void UpdateHierarchy(const Vector3 translates[], const Vector3 rotates[], const 
 		///iでそれが根元(親)かどうか判定する
 		if (i == 0) {
 			// 親がいない場合はローカル変換がそのままワールド変換
-			worldMatrices[i] = localMatrix;
+			worldMatrix[i] = localMatrix;
 		} else {
 			// 親がいる場合は親のワールド変換を適用
-			worldMatrices[i] = MultiplyMatrix(localMatrix, worldMatrices[i - 1]);
+			worldMatrix[i] = MultiplyMatrix(localMatrix, worldMatrix[i - 1]);
 		}
 	}
 }
 
 // 階層構造を描画
-void DrawHierarchy(const Matrix4x4 worldMatrices[], const uint32_t colors[], int partCount,
+void DrawHierarchy(const Matrix4x4 worldMatrix[], const uint32_t color[], int partCount,
 	const Matrix4x4& viewProjectionMatrix,
 	const Matrix4x4& viewportMatrix,
-	float sphereRadius = 0.05f) {
+	float sphereRadius) {
 
 	for (int i = 0; i < partCount; i++) {
 		// パーツの位置を取得
 		Vector3 worldPosition = {
-			worldMatrices[i].m[3][0],
-			worldMatrices[i].m[3][1],
-			worldMatrices[i].m[3][2]
+			worldMatrix[i].m[3][0],
+			worldMatrix[i].m[3][1],
+			worldMatrix[i].m[3][2]
 		};
 
 		// 球体描画
-		DrawSphere({ worldPosition, sphereRadius }, viewProjectionMatrix, viewportMatrix, colors[i]);
+		DrawSphere({ worldPosition, sphereRadius }, viewProjectionMatrix, viewportMatrix, color[i]);
 
-		// 親と線を描画（階層構造の可視化）
+		// 親と線を描画
 		if (i != 0) {
 			// 親の座標を求める
 			Vector3 parentPosition = {
-				worldMatrices[i - 1].m[3][0],
-				worldMatrices[i - 1].m[3][1],
-				worldMatrices[i - 1].m[3][2]
+				worldMatrix[i - 1].m[3][0],
+				worldMatrix[i - 1].m[3][1],
+				worldMatrix[i - 1].m[3][2]
 			};
 
 			// スクリーン座標変換
@@ -132,7 +132,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ワールド座標
 	Matrix4x4 worldMatrices[3];
 
-	// パーツの色
+	// 各パーツの色
 	uint32_t colors[3] = {
 		RED,   // Shoulder 赤
 	    GREEN, // Elbow    緑
@@ -178,7 +178,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 
 		// 階層構造の描画
-		DrawHierarchy(worldMatrices, colors, 3, worldViewProjectionMatrix, viewportMatrix);
+		DrawHierarchy(worldMatrices, colors, 3, worldViewProjectionMatrix, viewportMatrix, 0.05f);
 
 		ImGui::Begin("Window");
 		
