@@ -8,10 +8,88 @@
 #include"DrawObject.h"
 #include"CameraController.h"
 
+#include<string>
+
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 
 int kWindowWidth = 1280;
 int kWindowHeight = 720;
+
+enum class parts {
+	Shoulder,		// 肩
+	Elbow,			// 肘
+	Hand			// 手
+};
+
+// 階層構造の変換行列を計算
+void UpdateHierarchy(const Vector3 translates[], const Vector3 rotates[], const Vector3 scales[], Matrix4x4 worldMatrices[], int partCount) {
+
+	// partsの数だけ回す
+	for (int i = 0; i < partCount; i++) {
+
+		// ローカル変換行列を作成
+		Matrix4x4 scaleMatrix = MakeScaleMatrix(scales[i]);
+		Matrix4x4 rotateMatrix = MakeRotateXYZMatrix(rotates[i]);
+		Matrix4x4 translateMatrix = MakeTranslateMatrix(translates[i]);
+
+		// SRT順でローカルのアフィン行列
+		Matrix4x4 localMatrix = MultiplyMatrix(scaleMatrix, MultiplyMatrix(rotateMatrix, translateMatrix));
+
+		///iでそれが根元(親)かどうか判定する
+		if (i == 0) {
+			// 親がいない場合はローカル変換がそのままワールド変換
+			worldMatrices[i] = localMatrix;
+		} else {
+			// 親がいる場合は親のワールド変換を適用
+			worldMatrices[i] = MultiplyMatrix(localMatrix, worldMatrices[i - 1]);
+		}
+	}
+}
+
+// 階層構造を描画
+void DrawHierarchy(const Matrix4x4 worldMatrices[], const uint32_t colors[], int partCount,
+	const Matrix4x4& viewProjectionMatrix,
+	const Matrix4x4& viewportMatrix,
+	float sphereRadius = 0.05f) {
+
+	for (int i = 0; i < partCount; i++) {
+		// パーツの位置を取得
+		Vector3 worldPosition = {
+			worldMatrices[i].m[3][0],
+			worldMatrices[i].m[3][1],
+			worldMatrices[i].m[3][2]
+		};
+
+		// 球体描画
+		DrawSphere({ worldPosition, sphereRadius }, viewProjectionMatrix, viewportMatrix, colors[i]);
+
+		// 親と線を描画（階層構造の可視化）
+		if (i != 0) {
+			// 親の座標を求める
+			Vector3 parentPosition = {
+				worldMatrices[i - 1].m[3][0],
+				worldMatrices[i - 1].m[3][1],
+				worldMatrices[i - 1].m[3][2]
+			};
+
+			// スクリーン座標変換
+			Vector3 tPos1 = Transform(worldPosition, viewProjectionMatrix);
+			Vector3 tPos2 = Transform(parentPosition, viewProjectionMatrix);
+
+			Vector3 screenPos1 = Transform(tPos1, viewportMatrix);
+			Vector3 screenPos2 = Transform(tPos2, viewportMatrix);
+
+			// 線を描画
+			Novice::DrawLine(
+				static_cast<int>(screenPos1.x),
+				static_cast<int>(screenPos1.y),
+				static_cast<int>(screenPos2.x),
+				static_cast<int>(screenPos2.y),
+				WHITE
+			);
+		}
+	}
+}
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -32,6 +110,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float cameraRotateSpeed = 0.01f;
 	bool cameraMode = true;
 
+	// 各パーツのローカル変換
+	Vector3 translates[3] = {
+		{0.2f, 1.0f, 0.0f},
+		{0.4f, 0.0f, 0.0f},
+		{0.3f, 0.0f, 0.0f}
+	};
+
+	Vector3 rotates[3] = {
+		{0.0f, 0.0f, -6.8f},
+		{0.0f, 0.0f, -1.4f},
+		{0.0f, 0.0f, 0.0f}	
+	};
+
+	Vector3 scales[3] = {
+		{1.0f, 1.0f, 1.0f},
+		{1.0f, 1.0f, 1.0f},
+		{1.0f, 1.0f, 1.0f}
+	};
+
+	// ワールド座標
+	Matrix4x4 worldMatrices[3];
+
+	// パーツの色
+	uint32_t colors[3] = {
+		RED,   // Shoulder 赤
+	    GREEN, // Elbow    緑
+		BLUE   // Hand     青
+	};
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -44,6 +151,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
+
+		UpdateHierarchy(translates, rotates, scales, worldMatrices, 3);
 
 		CameraControllerManager(cameraMode, cameraTranslate, cameraRotate, cameraTranslateSpeed, cameraRotateSpeed, keys, preKeys);
 
@@ -68,8 +177,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// グリッド
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 
+		// 階層構造の描画
+		DrawHierarchy(worldMatrices, colors, 3, worldViewProjectionMatrix, viewportMatrix);
+
 		ImGui::Begin("Window");
 		
+		// 各パーツのImGui
+		ImGui::Text("Shoulder");
+		ImGui::DragFloat3("Position", &translates[0].x, 0.01f);
+		ImGui::DragFloat3("Rotation", &rotates[0].x, 0.01f);
+		ImGui::DragFloat3("Scale", &scales[0].x, 0.01f, 0.1f, 5.0f);
+
+		ImGui::Text("Elbow");
+		ImGui::DragFloat3("Position", &translates[1].x, 0.01f);
+		ImGui::DragFloat3("Rotation", &rotates[1].x, 0.01f);
+		ImGui::DragFloat3("Scale", &scales[1].x, 0.01f, 0.1f, 5.0f);
+
+		ImGui::Text("Hand");
+		ImGui::DragFloat3("Position", &translates[2].x, 0.01f);
+		ImGui::DragFloat3("Rotation", &rotates[2].x, 0.01f);
+		ImGui::DragFloat3("Scale", &scales[2].x, 0.01f, 0.1f, 5.0f);
+
+		ImGui::Text("CameraController");
 		ImGui::DragFloat3("cameraScale", &cameraScale.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
