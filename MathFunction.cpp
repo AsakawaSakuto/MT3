@@ -42,11 +42,15 @@ float Length(const Vector3& v) {
 
 // 正規化
 Vector3 Normalize(const Vector3& v) {
-	Vector3 result;
-	result.x = v.x / Length(v);
-	result.y = v.y / Length(v);
-	result.z = v.z / Length(v);
-	return Vector3(result);
+	float len = Length(v);
+	if (len == 0.0f) {
+		return Vector3{ 0.0f, 0.0f, 0.0f };  // ゼロ割り防止
+	}
+	return Vector3{
+		v.x / len,
+		v.y / len,
+		v.z / len
+	};
 }
 
 // 正射影ベクトル

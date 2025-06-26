@@ -7,11 +7,59 @@
 #include"mathFunction.h"
 #include"DrawObject.h"
 #include"CameraController.h"
+#include <cmath> 
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 
 int kWindowWidth = 1280;
 int kWindowHeight = 720;
+
+struct Spring {
+	Vector3 anchor;
+	float naturalLength;		// 自然長
+	float stiffness;			// 剛性 バネ定数k
+	float dampingCoefficient;	// 減衰係数
+};
+
+struct Ball {
+	Vector3 position;			// ボールの位置
+	Vector3 velocity;			// ボールの速度
+	Vector3 acceleration;		// ボールの加速度
+	float mass;					// ボールの質量
+	float radius;				// ボールの半径
+	unsigned int color;			// ボールの色
+};
+
+void UpdateSpring(Spring& spring, Ball& ball, float deltaTime) {
+
+	Vector3 diff = ball.position - spring.anchor;
+	float length = Length(diff);
+	if (length != 0.0f) {
+		Vector3 direction = Normalize(diff);
+		Vector3 restPosition = spring.anchor + direction * spring.naturalLength;
+		Vector3 displacement = length * (ball.position - restPosition);
+		Vector3 restoringForce = -spring.stiffness * displacement;
+		Vector3 dampingForce = -spring.dampingCoefficient * ball.velocity;
+		Vector3 force = restoringForce + dampingForce;
+		ball.acceleration = force / ball.mass;
+	}
+	// 加速度も速度もどちらも秒を基準とした値である
+	// それが、1/60秒間(deltaTime)適用されたと考える
+	ball.velocity += ball.acceleration * deltaTime;
+	ball.position += ball.velocity * deltaTime;
+}
+
+void DrawSpring(Spring& spring, Ball& ball, const Matrix4x4& viewProjectionMatrix,
+	const Matrix4x4& viewportMatrix, uint32_t color) {
+
+	Vector3 springScreenPos = MakeScreenToWorld(spring.anchor, viewProjectionMatrix, viewportMatrix);
+	Vector3 ballScreenPos = MakeScreenToWorld(ball.position, viewProjectionMatrix, viewportMatrix);
+	Novice::DrawLine(static_cast<int>(springScreenPos.x), static_cast<int>(springScreenPos.y),
+		static_cast<int>(ballScreenPos.x), static_cast<int>(ballScreenPos.y),
+		WHITE);
+
+	DrawSphere({ ball.position,ball.radius }, viewProjectionMatrix, viewportMatrix, color);
+}
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -32,6 +80,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float cameraRotateSpeed = 0.01f;
 	bool cameraMode = true;
 
+	Spring spring;
+	spring.anchor = { 0.0f,0.0f,0.0f };
+	spring.naturalLength = 1.0f;
+	spring.stiffness = 100.0f;
+	spring.dampingCoefficient = 2.0f;
+
+	Ball ball;
+	ball.position = { 2.5f,0.0f,0.0f };
+	ball.mass = 2.0f;
+	ball.radius = 0.05f;
+	ball.color = BLUE;
+
+	bool moveSpring = true;
+
+	float deltaTime = 1.0f / 60.0f;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -45,19 +109,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		Vector3 a = { 0.2f,1.0f,0.0f };
-		Vector3 b = { 2.4f,3.1f,1.2f };
-
-		Vector3 c = a + b;
-		Vector3 d = a - b;
-		Vector3 e = a * 2.4f;
-		Vector3 rotate = { 0.4f,1.43f,-0.8f };
-
-		Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
-		Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
-		Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
-		Matrix4x4 rotateMatrix = rotateXMatrix * rotateYMatrix * rotateZMatrix;
-
 		CameraControllerManager(cameraMode, cameraTranslate, cameraRotate, cameraTranslateSpeed, cameraRotateSpeed, keys, preKeys);
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix(cameraScale, cameraRotate, cameraTranslate);
@@ -70,6 +121,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
+		UpdateSpring(spring, ball, deltaTime);
+
 		///
 		/// ↑更新処理ここまで
 		///
@@ -81,16 +134,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// グリッド
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 
+		// バネを描画
+		DrawSpring(spring, ball, worldViewProjectionMatrix, viewportMatrix, BLUE);
+
 		ImGui::Begin("Window");
-		
-		ImGui::Text("c:%f,%f,%f", c.x, c.y, c.z);
-		ImGui::Text("d:%f,%f,%f", d.x, d.y, d.z);
-		ImGui::Text("e:%f,%f,%f", e.x, e.y, e.z);
-		ImGui::Text("matrix:\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n%f,%f,%f,%f\n",
-			rotateMatrix.m[0][0], rotateMatrix.m[0][1], rotateMatrix.m[0][2], rotateMatrix.m[0][3],
-			rotateMatrix.m[1][0], rotateMatrix.m[1][1], rotateMatrix.m[1][2], rotateMatrix.m[1][3],
-			rotateMatrix.m[2][0], rotateMatrix.m[2][1], rotateMatrix.m[2][2], rotateMatrix.m[2][3],
-			rotateMatrix.m[3][0], rotateMatrix.m[3][1], rotateMatrix.m[3][2], rotateMatrix.m[3][3]);
+
+		ImGui::Checkbox("Move Spring", &moveSpring);
+		ImGui::DragFloat3("ballPos", &ball.position.x, 0.01f);
+
 		ImGui::Text("CameraController");
 		ImGui::DragFloat3("cameraScale", &cameraScale.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
@@ -98,12 +149,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::End();
 
-		if (cameraMode)
-		{
+		if (cameraMode) {
 			Novice::ScreenPrintf(20, 20, "CameraMode : Translate : X->(D or A) Y->(Q or E) Z->(W or S)");
-		}
-		else
-		{
+		} else {
 			Novice::ScreenPrintf(20, 20, "CameraMode : Rotate : X->(W or S) Y->(Q or E) Z->(D or A)");
 		}
 		Novice::ScreenPrintf(20, 40, "RotateReset : R");

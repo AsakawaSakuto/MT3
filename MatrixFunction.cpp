@@ -443,3 +443,11 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 	return result;
 
 }
+
+// ワールド座標からスクリーン座標へ変換
+Vector3 MakeScreenToWorld(const Vector3& vector, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
+{
+	Vector3 tPos = Transform(vector, viewProjectionMatrix);
+	Vector3 screenPos = Transform(tPos, viewportMatrix);
+	return screenPos;
+}

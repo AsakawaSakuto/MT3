@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include"Vector3.h"
-#include"Matrix4x4.h"
-#include<assert.h>
+#include "Vector3.h"
+#include "Matrix4x4.h"
+#include <assert.h>
 #include <iostream>
 
 //行列の加算
@@ -51,3 +51,6 @@ Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip
 
 // ビューポート変換行列
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
+
+// ワールド座標からスクリーン座標へ変換
+Vector3 MakeScreenToWorld(const Vector3& vector, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
