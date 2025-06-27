@@ -35,9 +35,9 @@ void UpdateHierarchy(const Vector3 translate[], const Vector3 rotate[], const Ve
 		// SRT順でローカルのアフィン行列
 		Matrix4x4 localMatrix = MultiplyMatrix(scaleMatrix, MultiplyMatrix(rotateMatrix, translateMatrix));
 
-		///iでそれが根元(親)かどうか判定する
+		// iでそれが親かどうか判定する
 		if (i == 0) {
-			// 親がいない場合はローカル変換がそのままワールド変換
+			// 親がいない場合はローカル変換からそのままワールド変換
 			worldMatrix[i] = localMatrix;
 		} else {
 			// 親がいる場合は親のワールド変換を適用
@@ -53,7 +53,7 @@ void DrawHierarchy(const Matrix4x4 worldMatrix[], const uint32_t color[], int pa
 	float sphereRadius) {
 
 	for (int i = 0; i < partCount; i++) {
-		// パーツの位置を取得
+		// 各パーツの位置を取得
 		Vector3 worldPosition = {
 			worldMatrix[i].m[3][0],
 			worldMatrix[i].m[3][1],
@@ -184,19 +184,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		// 各パーツのImGui
 		ImGui::Text("Shoulder");
-		ImGui::DragFloat3("Position", &translates[0].x, 0.01f);
-		ImGui::DragFloat3("Rotation", &rotates[0].x, 0.01f);
-		ImGui::DragFloat3("Scale", &scales[0].x, 0.01f, 0.1f, 5.0f);
+		ImGui::DragFloat3("Position0", &translates[0].x, 0.01f);
+		ImGui::DragFloat3("Rotation0", &rotates[0].x, 0.01f);
+		ImGui::DragFloat3("Scale0", &scales[0].x, 0.01f, 0.1f, 5.0f);
 
 		ImGui::Text("Elbow");
-		ImGui::DragFloat3("Position", &translates[1].x, 0.01f);
-		ImGui::DragFloat3("Rotation", &rotates[1].x, 0.01f);
-		ImGui::DragFloat3("Scale", &scales[1].x, 0.01f, 0.1f, 5.0f);
+		ImGui::DragFloat3("Position1", &translates[1].x, 0.01f);
+		ImGui::DragFloat3("Rotation1", &rotates[1].x, 0.01f);
+		ImGui::DragFloat3("Scale1", &scales[1].x, 0.01f, 0.1f, 5.0f);
 
 		ImGui::Text("Hand");
-		ImGui::DragFloat3("Position", &translates[2].x, 0.01f);
-		ImGui::DragFloat3("Rotation", &rotates[2].x, 0.01f);
-		ImGui::DragFloat3("Scale", &scales[2].x, 0.01f, 0.1f, 5.0f);
+		ImGui::DragFloat3("Position2", &translates[2].x, 0.01f);
+		ImGui::DragFloat3("Rotation2", &rotates[2].x, 0.01f);
+		ImGui::DragFloat3("Scale2", &scales[2].x, 0.01f, 0.1f, 5.0f);
 
 		ImGui::Text("CameraController");
 		ImGui::DragFloat3("cameraScale", &cameraScale.x, 0.01f);
@@ -205,12 +205,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::End();
 
-		if (cameraMode)
-		{
+		if (cameraMode) {
 			Novice::ScreenPrintf(20, 20, "CameraMode : Translate : X->(D or A) Y->(Q or E) Z->(W or S)");
-		}
-		else
-		{
+		} else {
 			Novice::ScreenPrintf(20, 20, "CameraMode : Rotate : X->(W or S) Y->(Q or E) Z->(D or A)");
 		}
 		Novice::ScreenPrintf(20, 40, "RotateReset : R");
