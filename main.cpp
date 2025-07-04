@@ -30,10 +30,12 @@ struct Ball {
 	unsigned int color;			// ボールの色
 };
 
-void UpdateSpring(Spring& spring, Ball& ball, float deltaTime) {
-
+void UpdateSpring(Spring& spring, Ball& ball,float& len,Vector3& dif) {
+	const float deltaTime = 1.0f / 60.0f;
 	Vector3 diff = ball.position - spring.anchor;
-	float length = Length(diff);
+	dif = diff;
+	float length = diff.Length();
+	len = length;
 	if (length != 0.0f) {
 		Vector3 direction = Normalize(diff);
 		Vector3 restPosition = spring.anchor + direction * spring.naturalLength;
@@ -91,10 +93,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ball.mass = 2.0f;
 	ball.radius = 0.05f;
 	ball.color = BLUE;
+	ball.velocity = {};
+	ball.acceleration = {};
 
-	bool moveSpring = true;
+	bool moveSpring = false;
 
-	float deltaTime = 1.0f / 60.0f;
+	float len = 0.0f;
+	Vector3 dif = {};
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -121,7 +126,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		UpdateSpring(spring, ball, deltaTime);
+		if (moveSpring)
+		{
+			UpdateSpring(spring, ball, len, dif);
+		}
 
 		///
 		/// ↑更新処理ここまで
@@ -146,6 +154,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("cameraScale", &cameraScale.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+
+		ImGui::Text("SpringAnchor,X:%f,Y:%f,Z:%f", spring.anchor.x, spring.anchor.y, spring.anchor.z);
+		ImGui::Text("Updated Position: %.2f, %.2f, %.2f", ball.position.x, ball.position.y, ball.position.z);
+		ImGui::Text("Updated Velocity: %.2f, %.2f, %.2f", ball.velocity.x, ball.velocity.y, ball.velocity.z);
+		ImGui::Text("Updated Acceleration: %.2f, %.2f, %.2f", ball.acceleration.x, ball.acceleration.y, ball.acceleration.z);
+		ImGui::Text("len:%f", len);
+		ImGui::Text("dif:%f,%f,%f", dif.x, dif.y, dif.z);
 
 		ImGui::End();
 
