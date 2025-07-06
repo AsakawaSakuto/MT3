@@ -88,7 +88,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	const float deltaTime = 1.0f / 60.0f; // 固定タイム
 
 	// 円運動のパラメータ
-	float angularVelocity = static_cast<float>(M_PI);
+	float angularVelocity = float(M_PI);
 	float radius = 0.8f;
 	float currentAngle = 0.0f;
 	Vector3 centerPosition = {};
@@ -153,10 +153,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			isAnimationActive = true;
 			currentAngle = 0.0f;
 			ball.position = { centerPosition.x + radius, centerPosition.y, centerPosition.z };
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Stop")) {
-			isAnimationActive = false;
 		}
 
 		ImGui::End();
