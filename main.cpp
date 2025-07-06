@@ -7,6 +7,7 @@
 #include"mathFunction.h"
 #include"DrawObject.h"
 #include"CameraController.h"
+#include"Vector3.h"
 
 const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 
@@ -32,6 +33,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float cameraRotateSpeed = 0.01f;
 	bool cameraMode = true;
 
+	const float deltaTime = 1.0f / 60.0f; // 固定タイムステップ (秒)
+
+	// 振り子のパラメータ
+	float pendulumLength = 1.5f;
+	float gravity = 9.8f;
+	float initialAngle = static_cast<float>(M_PI) / 4.0f;
+	float currentAngle = initialAngle;
+	float angularVelocity = 0.0f;
+	bool isAnimationActive = false;
+	Vector3 pivotPosition = { 0.0f, 1.5f, 0.0f };
+
+	Sphere ball;
+	ball.radius = 0.1f;
+	ball.center.x = pivotPosition.x + pendulumLength * std::sin(currentAngle);
+	ball.center.y = pivotPosition.y - pendulumLength * std::cos(currentAngle);
+	ball.center.z = pivotPosition.z;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -46,16 +64,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		CameraControllerManager(cameraMode, cameraTranslate, cameraRotate, cameraTranslateSpeed, cameraRotateSpeed, keys, preKeys);
-
 		Matrix4x4 worldMatrix = MakeAffineMatrix(cameraScale, cameraRotate, cameraTranslate);
-
 		Matrix4x4 viewMatrix = InverseMatrix(worldMatrix);
-
 		Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(kWindowWidth) / float(kWindowHeight), 1.0f, 0.0f);
-
 		Matrix4x4 worldViewProjectionMatrix = MultiplyMatrix(viewMatrix, projectionMatrix);
-
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
+
+		if (isAnimationActive) {
+			if (pendulumLength > 1e-6f) {
+				float angularAcceleration = -(gravity / pendulumLength) * std::sin(currentAngle);
+				angularVelocity += angularAcceleration * deltaTime;
+			}
+			currentAngle += angularVelocity * deltaTime;
+
+			// ボールを更新
+			ball.center.x = pivotPosition.x + pendulumLength * std::sin(currentAngle);
+			ball.center.y = pivotPosition.y - pendulumLength * std::cos(currentAngle);
+			ball.center.z = pivotPosition.z;
+		}
 
 		///
 		/// ↑更新処理ここまで
@@ -68,11 +94,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// グリッド
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 
+		DrawSphere(ball, worldViewProjectionMatrix, viewportMatrix, WHITE);
+
+		Vector3 screen1 = Transform(pivotPosition, MultiplyMatrix(worldViewProjectionMatrix, viewportMatrix));
+		Vector3 screen2 = Transform(ball.center, MultiplyMatrix(worldViewProjectionMatrix, viewportMatrix));
+		Novice::DrawLine(int(screen1.x), int(screen1.y), int(screen2.x), int(screen2.y), WHITE);
+
 		ImGui::Begin("Window");
 		
 		ImGui::DragFloat3("cameraScale", &cameraScale.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
+
+		if (ImGui::Button("Start")) {
+			isAnimationActive = true;
+			currentAngle = initialAngle;
+			angularVelocity = 0.0f;
+			// ボールを初期状態にする
+			ball.center.x = pivotPosition.x + pendulumLength * std::sin(currentAngle);
+			ball.center.y = pivotPosition.y - pendulumLength * std::cos(currentAngle);
+			ball.center.z = pivotPosition.z;
+		}
 
 		ImGui::End();
 
