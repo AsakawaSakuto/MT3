@@ -27,9 +27,21 @@ struct Segment {
 	Vector3 diff;   // 終点への差分ベクトル
 };
 
+// 平面
 struct Plane {
 	Vector3 normal; // 法線
 	float distance; // 距離
+};
+
+// ボール
+struct Ball {
+	Vector3 position;     // 位置
+	Vector3 velocity;     // 速度
+	Vector3 acceleration; // 加速度
+	float radius;         // 半径
+	float mass;           // 質量
+	float restitution;    // 反発係数
+	uint32_t color;       // 色
 };
 
 // クロス積（ベクトル積）
