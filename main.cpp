@@ -14,10 +14,6 @@ const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 int kWindowWidth = 1280;
 int kWindowHeight = 720;
 
-//void SetBallPosition(Sphere ball) {
-//
-//}
-
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -36,25 +32,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float cameraTranslateSpeed = 0.03f;
 	float cameraRotateSpeed = 0.01f;
 	bool cameraMode = true;
-
-	const float deltaTime = 1.0f / 60.0f; // 固定タイムステップ (秒)
-
-	// 振り子のパラメータ
-	float pendulumLength = 1.5f;
-	float angle = static_cast<float>(M_PI) / 4.0f;
-	float angleSpeed = -2.0f * static_cast<float>(M_PI) / 2.0f;
-	float currentAngle = 0.0f;
-	bool isAnimationActive = false;
-	Vector3 pivotPosition = { 0.0f, 1.5f, 0.0f };
-
-	float horizontalRadius = pendulumLength * std::sin(angle);
-	float verticalDrop = pendulumLength * std::cos(angle);
-
-	Sphere ball;
-	ball.center.x = pivotPosition.x + horizontalRadius * std::cos(currentAngle);
-	ball.center.y = pivotPosition.y - verticalDrop;
-	ball.center.z = pivotPosition.z + horizontalRadius * std::sin(currentAngle);
-	ball.radius = 0.1f;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -76,19 +53,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 worldViewProjectionMatrix = MultiplyMatrix(viewMatrix, projectionMatrix);
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		if (isAnimationActive) {
-			currentAngle += angleSpeed * deltaTime;
-			// 角度が2M_PIを超えたらリセットする
-			if (currentAngle > 2.0f * M_PI) {
-				currentAngle -= 2.0f * static_cast<float>(M_PI);
-			}
-			horizontalRadius = pendulumLength * std::sin(angle);
-			verticalDrop = pendulumLength * std::cos(angle);
-			ball.center.x = pivotPosition.x + horizontalRadius * std::cos(currentAngle);
-			ball.center.y = pivotPosition.y - verticalDrop;
-			ball.center.z = pivotPosition.z + horizontalRadius * std::sin(currentAngle);
-		}
-
 		///
 		/// ↑更新処理ここまで
 		///
@@ -100,22 +64,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// グリッド
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 
-		DrawSphere(ball, worldViewProjectionMatrix, viewportMatrix, WHITE);
-
-		Vector3 screen1 = Transform(pivotPosition, MultiplyMatrix(worldViewProjectionMatrix, viewportMatrix));
-		Vector3 screen2 = Transform(ball.center, MultiplyMatrix(worldViewProjectionMatrix, viewportMatrix));
-		Novice::DrawLine(int(screen1.x), int(screen1.y), int(screen2.x), int(screen2.y), WHITE);
-
 		ImGui::Begin("Window");
 
 		ImGui::DragFloat3("cameraScale", &cameraScale.x, 0.01f);
 		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
 		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
 
-		if (ImGui::Button("Start")) {
-			isAnimationActive = true;
-		}
-		ImGui::DragFloat("Length", &pendulumLength, 0.01f);
 		ImGui::End();
 
 		if (cameraMode)
