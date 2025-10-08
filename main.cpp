@@ -13,6 +13,9 @@ const char kWindowTitle[] = "LE2A_01_アサカワ_サクト";
 int kWindowWidth = 1280;
 int kWindowHeight = 720;
 
+static const int kColumnWidth = 60;
+static const int kRowHeight = 20;
+
 Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
 	// 正規化された軸ベクトルを使用
 	Vector3 n = Normalize(axis);
@@ -54,7 +57,7 @@ void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label
 	for (int row = 0; row < 4; ++row) {
 		for (int column = 0; column < 4; ++column) {
 
-			Novice::ScreenPrintf(x + column * kColumnWidth, 20 + y + row * kRowHeight, "%6.02f", matrix.m[row][column]);
+			Novice::ScreenPrintf(x + column * kColumnWidth, 20 + y + row * kRowHeight, "%6.03f", matrix.m[row][column]);
 
 		}
 	}
@@ -119,24 +122,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// グリッド
 		DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 
-		ImGui::Begin("Window");
-		
-		ImGui::DragFloat3("cameraScale", &cameraScale.x, 0.01f);
-		ImGui::DragFloat3("CameraRotate", &cameraRotate.x, 0.01f);
-		ImGui::DragFloat3("CameraTranslate", &cameraTranslate.x, 0.01f);
-
-		ImGui::End();
-
-		if (cameraMode)
-		{
-			Novice::ScreenPrintf(20, 20, "CameraMode : Translate : X->(D or A) Y->(Q or E) Z->(W or S)");
-		}
-		else
-		{
-			Novice::ScreenPrintf(20, 20, "CameraMode : Rotate : X->(W or S) Y->(Q or E) Z->(D or A)");
-		}
-		Novice::ScreenPrintf(20, 40, "RotateReset : R");
-		Novice::ScreenPrintf(20, 60, "TranslateReset : T");
+		MatrixScreenPrintf(0, 0, rotateMatrix, "rotateMatrix");
 
 		///
 		/// ↑描画処理ここまで
