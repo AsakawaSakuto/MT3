@@ -13,6 +13,20 @@ const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
 int kWindowWidth = 1280;
 int kWindowHeight = 720;
 
+static const int kColumnWidth = 60;
+static const int kRowHeight = 20;
+
+void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix, const char* label) {
+	Novice::ScreenPrintf(x, y, "%s", label);
+	for (int row = 0; row < 4; ++row) {
+		for (int column = 0; column < 4; ++column) {
+
+			Novice::ScreenPrintf(x + column * kColumnWidth, 20 + y + row * kRowHeight, "%6.03f", matrix.m[row][column]);
+
+		}
+	}
+}
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
