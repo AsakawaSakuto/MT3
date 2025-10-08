@@ -8,7 +8,7 @@
 #include"DrawObject.h"
 #include"CameraController.h"
 
-const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
+const char kWindowTitle[] = "LE2A_01_アサカワ_サクト";
 
 int kWindowWidth = 1280;
 int kWindowHeight = 720;

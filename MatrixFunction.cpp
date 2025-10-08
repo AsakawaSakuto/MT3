@@ -1,5 +1,8 @@
 ﻿#include "MatrixFunction.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 //行列の加算
 Matrix4x4 AddMatrix(const Matrix4x4& m1, const Matrix4x4& m2) {
 	Matrix4x4 result{};
@@ -442,4 +445,81 @@ Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, f
 
 	return result;
 
+}
+
+// 任意軸回転行列
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
+	// 正規化された軸ベクトルを使用
+	Vector3 n = Normalize(axis);
+
+	float x = n.x;
+	float y = n.y;
+	float z = n.z;
+	float c = std::cos(angle);
+	float s = std::sin(angle);
+	float oneMinusC = 1.0f - c;
+
+	Matrix4x4 result{};
+
+	// === 左手座標系 ＋ 行優先（DirectX）対応 ===
+	result.m[0][0] = x * x * oneMinusC + c;
+	result.m[0][1] = y * x * oneMinusC - z * s;
+	result.m[0][2] = z * x * oneMinusC + y * s;
+	result.m[0][3] = 0.0f;
+
+	result.m[1][0] = x * y * oneMinusC + z * s;
+	result.m[1][1] = y * y * oneMinusC + c;
+	result.m[1][2] = z * y * oneMinusC - x * s;
+	result.m[1][3] = 0.0f;
+
+	result.m[2][0] = x * z * oneMinusC - y * s;
+	result.m[2][1] = y * z * oneMinusC + x * s;
+	result.m[2][2] = z * z * oneMinusC + c;
+	result.m[2][3] = 0.0f;
+
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
+
+	return result;
+}
+
+// from方向 → to方向 に向ける回転行列
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to) {
+	Vector3 f = Normalize(from);
+	Vector3 t = Normalize(to);
+
+	float dot = Dot(f, t);
+	dot = std::clamp(dot, -1.0f, 1.0f);
+
+	// 同方向
+	if (std::abs(dot - 1.0f) < 1e-6f) {
+		Matrix4x4 I{};
+		I.m[0][0] = I.m[1][1] = I.m[2][2] = I.m[3][3] = 1.0f;
+		return I;
+	}
+
+	// 真逆方向（180度回転）
+	if (std::abs(dot + 1.0f) < 1e-6f) {
+		// from と最も垂直な軸を探す
+		Vector3 arbitraryAxis;
+		if (std::abs(f.x) < std::abs(f.y) && std::abs(f.x) < std::abs(f.z)) {
+			arbitraryAxis = { 1, 0, 0 };
+		}
+		else if (std::abs(f.y) < std::abs(f.z)) {
+			arbitraryAxis = { 0, 1, 0 };
+		}
+		else {
+			arbitraryAxis = { 0, 0, 1 };
+		}
+
+		Vector3 axis = Normalize(Cross(arbitraryAxis, f)); // 安定した直交軸
+		return MakeRotateAxisAngle(axis, static_cast<float>(M_PI));
+	}
+
+	// 通常ケース
+	Vector3 axis = Cross(t, f); // 左手系
+	float angle = std::acos(dot);
+	return MakeRotateAxisAngle(axis, angle);
 }

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"Vector3.h"
 #include"Matrix4x4.h"
+#include"MathFunction.h"
 #include<assert.h>
 #include <iostream>
 
@@ -51,3 +52,9 @@ Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip
 
 // ビューポート変換行列
 Matrix4x4 MakeViewportMatrix(float left, float top, float width, float height, float minDepth, float maxDepth);
+
+// 任意軸回転行列
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle);
+
+// from方向 → to方向 に向ける回転行列
+Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
