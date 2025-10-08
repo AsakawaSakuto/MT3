@@ -8,10 +8,46 @@
 #include"DrawObject.h"
 #include"CameraController.h"
 
-const char kWindowTitle[] = "LE2B_02_アサカワ_サクト";
+const char kWindowTitle[] = "LE2A_01_アサカワ_サクト";
 
 int kWindowWidth = 1280;
 int kWindowHeight = 720;
+
+Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float angle) {
+	// 正規化された軸ベクトルを使用
+	Vector3 n = Normalize(axis);
+
+	float x = n.x;
+	float y = n.y;
+	float z = n.z;
+	float c = std::cos(angle);
+	float s = std::sin(angle);
+	float oneMinusC = 1.0f - c;
+
+	Matrix4x4 result{};
+
+	result.m[0][0] = x * x * oneMinusC + c;
+	result.m[0][1] = x * y * oneMinusC + z * s;
+	result.m[0][2] = x * z * oneMinusC - y * s;
+	result.m[0][3] = 0.0f;
+
+	result.m[1][0] = y * x * oneMinusC - z * s;
+	result.m[1][1] = y * y * oneMinusC + c;
+	result.m[1][2] = y * z * oneMinusC + x * s;
+	result.m[1][3] = 0.0f;
+
+	result.m[2][0] = z * x * oneMinusC + y * s;
+	result.m[2][1] = z * y * oneMinusC - x * s;
+	result.m[2][2] = z * z * oneMinusC + c;
+	result.m[2][3] = 0.0f;
+
+	result.m[3][0] = 0.0f;
+	result.m[3][1] = 0.0f;
+	result.m[3][2] = 0.0f;
+	result.m[3][3] = 1.0f;
+
+	return result;
+}
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -31,6 +67,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float cameraTranslateSpeed = 0.03f;
 	float cameraRotateSpeed = 0.01f;
 	bool cameraMode = true;
+
+	Vector3 axis = Normalize({ 1.0f,1.0f,1.0f });
+	float angle = 0.44f;
+	Matrix4x4 rotateMatrix = MakeRotateAxisAngle(axis,angle);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
